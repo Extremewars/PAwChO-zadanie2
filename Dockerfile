@@ -8,7 +8,7 @@ RUN apk add --no-cache git openssh
 #  Katalog roboczy
 WORKDIR /app
 # Pobieranie plików przez publiczne repozytorium
-RUN git clone git@github.com:Extremewars/PAwChO-zadanie1_dod_source.git .
+RUN git clone https://github.com/Extremewars/PAwChO-zadanie1-dodatek.git .
 # Skopiowanie spisu zależności, jeśli się nie zmieniły część warstw zostanie pobrana z cache'a
 RUN cp src/package*.json ./ && npm install
 # Instalacja pakietu pkg umożliwiającego utworzyć plik wykonywalny projektu
