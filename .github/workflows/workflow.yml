@@ -65,13 +65,13 @@ jobs:
             type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
           cache-to: |
             type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
-          tags: zadanie2:sha-${{ github.sha }}
+          tags: zadanie2:arm64
       -
         name: Run Trivy vulnerability scanner for arm64 image
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: image
-          image-ref: zadanie2:sha-${{ github.sha }}
+          image-ref: zadanie2:arm64
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
@@ -91,14 +91,14 @@ jobs:
             type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
           cache-to: |
             type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
-          tags: zadanie2:sha-${{ github.sha }}
+          tags: zadanie2:amd64
       
       -
         name: Run Trivy vulnerability scanner for amd64 image
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: image
-          image-ref: zadanie2:sha-${{ github.sha }}
+          image-ref: zadanie2:amd64
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
