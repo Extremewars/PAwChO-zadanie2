@@ -46,12 +46,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - 
-        name: Build a Docker image
+        name: Build an arm64 Docker image for Trivy check
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           push: false
           load: true
           cache-from: |
@@ -60,7 +60,34 @@ jobs:
             type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
           tags: ${{ steps.meta.outputs.tags }}
       -
-        name: Run Trivy vulnerability scanner
+        name: Run Trivy vulnerability scanner for arm64 image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: image
+          image-ref: ${{ steps.meta.outputs.tags }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - 
+        name: Build an amd64 Docker image for Trivy check
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: false
+          load: true
+          cache-from: |
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
+          cache-to: |
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
+          tags: ${{ steps.meta.outputs.tags }}
+      
+      -
+        name: Run Trivy vulnerability scanner for amd64 image
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: image
