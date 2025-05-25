@@ -1,4 +1,4 @@
-name: Pushing image to repozitories (GHCR and Dockerhub)
+name: Pushing image to repositories (GHCR and Dockerhub)
 
 on:
   workflow_dispatch:
