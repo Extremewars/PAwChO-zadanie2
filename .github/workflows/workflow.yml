@@ -1,4 +1,4 @@
-name: GHAction example  
+name: Wypchnięcie do repozytorium
 
 on:
   workflow_dispatch:
@@ -21,7 +21,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/example
+          images: |
+            ghcr.io/${{ github.repository_owner }}/zadanie2
+            docker.io/${{ vars.DOCKERHUB_USERNAME }}/zadanie2
           flavor: latest=false
           tags: |
             type=sha,priority=100,prefix=sha-,format=short
@@ -44,7 +46,34 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - 
+        name: Build a Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: false
+          load: true
+          cache-from: |
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
+          cache-to: |
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
+          tags: ${{ steps.meta.outputs.tags }}
+      -
+        name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: image
+          image-ref: ${{ steps.meta.outputs.tags }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      -
         name: Build and push Docker image
+        if: success()
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -52,3 +81,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          cache-from: |
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
+          cache-to: |
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
