@@ -1,4 +1,4 @@
-name: Wypchnięcie do repozytorium
+name: Pushing image to repozitories (GHCR and Dockerhub)
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   ci_step:
-    name: Build, tag and push Docker image to GHCR
+    name: Build, tag and push Docker image to GHCR and Dockerhub
     runs-on: ubuntu-latest
       
     steps:
@@ -53,7 +53,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - 
-        name: Build an arm64 Docker image for Trivy check
+        name: Build an arm64 image for Trivy check
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -67,7 +67,7 @@ jobs:
             type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
           tags: zadanie2:arm64
       -
-        name: Run Trivy vulnerability scanner for arm64 image
+        name: Run Trivy scanner for arm64 image
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: image
@@ -79,7 +79,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - 
-        name: Build an amd64 Docker image for Trivy check
+        name: Build an amd64 image for Trivy check
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -94,7 +94,7 @@ jobs:
           tags: zadanie2:amd64
       
       -
-        name: Run Trivy vulnerability scanner for amd64 image
+        name: Run Trivy scanner for amd64 image
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: image
