@@ -46,6 +46,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - 
+        name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - 
         name: Build an arm64 Docker image for Trivy check
         uses: docker/build-push-action@v5
         with:
