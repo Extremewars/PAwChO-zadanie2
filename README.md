@@ -1,7 +1,5 @@
 # PAwChO-zadanie2
 
-## Aktualna wersja
-
 [![Github build status](https://github.com/Extremewars/PAwChO-zadanie2/actions/workflows/workflow.yml/badge.svg)](https://github.com/Extremewars/PAwChO-zadanie2/actions/workflows/workflow.yml)
 [![GitHub release](https://img.shields.io/github/release/Extremewars/PAwChO-zadanie2.svg)](https://github.com/Extremewars/PAwChO-zadanie2/releases)
 
