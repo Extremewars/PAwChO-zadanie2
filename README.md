@@ -44,7 +44,8 @@ gdzie x - numer poprawki/commita
 ## Zarządzanie danymi cache
 
 Dane cache są przechowywane w oddzielnym repozytorium Docker Hub:
-[zadanie2-cache](https://hub.docker.com/repository/docker/extremical/zadanie2-cache/general)
+[zadanie2-cache](https://hub.docker.com/repository/docker/extremical/zadanie2-cache/general)  
+Przechowuje dwa tagi dla poszczególnej architektury.
 
 Przy publikacji obrazu na repozytoria ponownie korzystamy z cache'u w ostatnim kroku workflowa:
 ```yml
@@ -58,9 +59,11 @@ Przy publikacji obrazu na repozytoria ponownie korzystamy z cache'u w ostatnim k
     platforms: linux/amd64,linux/arm64
     push: true
     cache-from: |
-      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
+      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:amd64
+      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:arm64
     cache-to: |
-      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
+      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:amd64,mode=max,platform=linux/amd64
+      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:arm64,mode=max,platform=linux/arm64
     tags: ${{ steps.meta.outputs.tags }}
 ```
 
@@ -85,9 +88,9 @@ Załadowanie obrazu:
     push: false
     load: true
     cache-from: |
-      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
+      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:arm64
     cache-to: |
-      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
+      type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:arm64,mode=max,platform=linux/arm64
     tags: zadanie2:arm64
 ```
 Do sprawdzenia obrazu zastosowano narzędzie Trivy zaimplementowane jako GitHub Action: [Trivy Action](https://github.com/aquasecurity/trivy-action)  
@@ -175,9 +178,9 @@ jobs:
           push: false
           load: true
           cache-from: |
-            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:arm64
           cache-to: |
-            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:arm64,mode=max,platform=linux/arm64
           tags: zadanie2:arm64
       -
         name: Run Trivy scanner for arm64 image
@@ -201,9 +204,9 @@ jobs:
           push: false
           load: true
           cache-from: |
-            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:amd64
           cache-to: |
-            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:amd64,mode=max,platform=linux/amd64
           tags: zadanie2:amd64
       
       -
@@ -228,8 +231,11 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           cache-from: |
-            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:amd64
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:arm64
           cache-to: |
-            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:latest,mode=max
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:amd64,mode=max,platform=linux/amd64
+            type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2-cache:arm64,mode=max,platform=linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
+
 ```
